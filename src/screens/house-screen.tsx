@@ -1,12 +1,14 @@
-import { Check, LayoutGrid, Star } from 'lucide-react'
+import { Check, ExternalLink, LayoutGrid, Star } from 'lucide-react'
 
 import { Avatar } from '@/components/avatar'
+import { FirstImpressionsHeader } from '@/components/first-impressions'
 import { ParticipantBadge } from '@/components/participant-badge'
 import { PhotoCarousel } from '@/components/photo-carousel'
 import { PriceBlock } from '@/components/price-block'
 import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { formatDecimal, plural } from '@/domain/format'
+import { NOTE_AUTHOR_NAME, opinionsFor } from '@/domain/opinions'
 import { requiredPicks } from '@/domain/standings'
 import type { Ballot, Participant, Picks } from '@/domain/types'
 import { cn } from '@/lib/utils'
@@ -20,6 +22,7 @@ type Props = {
   onPick: (listingId: string, position: number | null) => void
   onOpenReview: () => void
   onOpenList: () => void
+  onOpenOpinions: () => void
   onSignOut: () => void
 }
 
@@ -32,6 +35,7 @@ export function HouseScreen({
   onPick,
   onOpenReview,
   onOpenList,
+  onOpenOpinions,
   onSignOut,
 }: Props) {
   const { listings, participants } = ballot
@@ -41,6 +45,8 @@ export function HouseScreen({
   const myPosition = picks.indexOf(listing.id)
   const suggester = participants.find((p) => p.id === listing.suggestedBy)
   const nameOf = (id: string) => listings.find((l) => l.id === id)?.name ?? ''
+  const opinions = opinionsFor(ballot, listing.id)
+  const participantName = (id: string) => participants.find((p) => p.id === id)?.name ?? '?'
   const isLast = index === total - 1
 
   const facts = [
@@ -93,22 +99,7 @@ export function HouseScreen({
           <article className="flex flex-col gap-3 p-4 md:p-0">
             <div className="flex flex-col gap-0.5">
               <h1 className="text-[22px] leading-tight font-bold">{listing.name}</h1>
-              <p className="text-[13.5px] text-muted-foreground">
-                {listing.location}
-                {listing.airbnbUrl && (
-                  <>
-                    {' · '}
-                    <a
-                      href={listing.airbnbUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline-offset-2 hover:text-foreground hover:underline"
-                    >
-                      Airbnb ↗
-                    </a>
-                  </>
-                )}
-              </p>
+              <p className="text-[13.5px] text-muted-foreground">{listing.location}</p>
               {suggester && (
                 <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-muted-foreground">
                   <Avatar name={suggester.name} size="sm" />
@@ -138,11 +129,41 @@ export function HouseScreen({
               </ul>
             )}
 
-            {listing.note && (
-              <p className="text-sm leading-relaxed">
-                <b className="font-semibold">Análise:</b> {listing.note}
-              </p>
-            )}
+            <section aria-label="Análises" className="overflow-hidden rounded-[14px] border">
+              {listing.note && (
+                <div className="flex flex-col gap-2 p-3.5">
+                  <FirstImpressionsHeader authorName={NOTE_AUTHOR_NAME} />
+                  <p className="text-sm leading-relaxed">{listing.note}</p>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={onOpenOpinions}
+                className={cn(
+                  'flex min-h-12 w-full items-center justify-between gap-2 bg-muted px-3.5 py-3 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset',
+                  listing.note && 'border-t',
+                )}
+              >
+                <span className="flex min-w-0 items-center gap-2 text-sm font-semibold">
+                  {opinions.length > 0 && (
+                    <span className="flex shrink-0" aria-hidden="true">
+                      {opinions.slice(0, 3).map((o, i) => (
+                        <Avatar
+                          key={o.participantId}
+                          name={participantName(o.participantId)}
+                          size="sm"
+                          className={cn('ring-2 ring-muted', i > 0 && '-ml-2')}
+                        />
+                      ))}
+                    </span>
+                  )}
+                  Mais análises · {opinions.length}
+                </span>
+                <span className="shrink-0 text-[13px] font-semibold text-primary">
+                  {opinions.length > 0 ? 'Ver e escrever ›' : 'Escrever ›'}
+                </span>
+              </button>
+            </section>
 
             {listing.highlights?.length > 0 && (
               <section aria-labelledby="highlights-title" className="flex flex-col gap-1.5">
@@ -161,6 +182,23 @@ export function HouseScreen({
                   ))}
                 </ul>
               </section>
+            )}
+
+            {listing.airbnbUrl && (
+              <a
+                href={listing.airbnbUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 rounded-[14px] border p-3.5 outline-none transition-colors hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <span className="flex flex-1 flex-col gap-0.5">
+                  <span className="text-[15px] font-semibold">Ver no Airbnb</span>
+                  <span className="text-[13px] text-muted-foreground">
+                    Todas as fotos, detalhes e avaliações de outros hóspedes
+                  </span>
+                </span>
+                <ExternalLink className="size-5 shrink-0 text-primary" aria-hidden="true" />
+              </a>
             )}
           </article>
 

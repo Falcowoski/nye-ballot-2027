@@ -1,8 +1,9 @@
-import { ImageOff } from 'lucide-react'
+import { ImageOff, MessageSquare } from 'lucide-react'
 
 import { ParticipantBadge } from '@/components/participant-badge'
 import { Button } from '@/components/ui/button'
 import { formatBrl, plural } from '@/domain/format'
+import { analysisCount } from '@/domain/opinions'
 import { splitPrice } from '@/domain/pricing'
 import { requiredPicks } from '@/domain/standings'
 import type { Ballot, Participant, Picks } from '@/domain/types'
@@ -41,6 +42,7 @@ export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenRe
           {listings.map((listing, index) => {
             const position = picks.indexOf(listing.id)
             const split = listing.totalPrice ? splitPrice(listing.totalPrice, participants) : null
+            const analyses = analysisCount(ballot, listing)
             const facts = [
               listing.bedrooms != null && plural(listing.bedrooms, 'quarto', 'quartos'),
               listing.beds != null && plural(listing.beds, 'cama', 'camas'),
@@ -77,7 +79,9 @@ export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenRe
                     )}
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 py-1 pr-1 md:p-4">
-                    <span className="truncate text-[15px] font-semibold md:text-[17px]">{listing.name}</span>
+                    <span className="line-clamp-2 text-[15px] leading-snug font-semibold md:text-[17px]">
+                      {listing.name}
+                    </span>
                     <span className="truncate text-[12.5px] text-muted-foreground">{listing.location}</span>
                     <span className="mt-1 text-[17px] font-bold tabular-nums">
                       {split ? (
@@ -91,6 +95,12 @@ export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenRe
                     </span>
                     {facts.length > 0 && (
                       <span className="truncate text-xs text-muted-foreground">{facts.join(' · ')}</span>
+                    )}
+                    {analyses > 0 && (
+                      <span className="mt-0.5 flex items-center gap-1 text-xs font-medium text-primary">
+                        <MessageSquare className="size-3.5" aria-hidden="true" />
+                        {plural(analyses, 'análise', 'análises')}
+                      </span>
                     )}
                   </span>
                 </button>

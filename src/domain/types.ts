@@ -30,10 +30,19 @@ export type Vote = {
   updatedAt: string
 }
 
+export type Opinion = {
+  participantId: string
+  listingId: string
+  body: string
+  updatedAt: string
+}
+
 export type Ballot = {
   participants: Participant[]
   listings: Listing[]
   votes: Vote[]
+  /** Newest first. */
+  opinions: Opinion[]
 }
 
 /** The voter's current top picks, by position (index 0 = 1st place). */

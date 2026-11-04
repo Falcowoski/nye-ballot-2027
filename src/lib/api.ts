@@ -23,7 +23,18 @@ async function rpc<T>(fn: string, args: Record<string, unknown>): Promise<T> {
 
 export const checkPassword = (password: string) => rpc<boolean>('check_password', { p_password: password })
 
-export const getBallot = (password: string) => rpc<Ballot>('get_ballot', { p_password: password })
+export const getBallot = async (password: string) => {
+  const ballot = await rpc<Ballot>('get_ballot', { p_password: password })
+  return { ...ballot, opinions: ballot.opinions ?? [] }
+}
+
+export const saveOpinion = (password: string, participantId: string, listingId: string, body: string) =>
+  rpc<{ ok: boolean; deleted: boolean }>('save_opinion', {
+    p_password: password,
+    p_participant_id: participantId,
+    p_listing_id: listingId,
+    p_body: body,
+  })
 
 export const castVote = (password: string, participantId: string, ranking: string[]) =>
   rpc<{ ok: boolean; updatedAt: string }>('cast_vote', {

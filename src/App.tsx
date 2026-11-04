@@ -6,16 +6,17 @@ import { Button } from '@/components/ui/button'
 import { assignPick, computeStandings, emptyPicks, movePick, requiredPicks, TOP_N } from '@/domain/standings'
 import type { Ballot, Picks } from '@/domain/types'
 import { useBallot } from '@/hooks/use-ballot'
-import { castVote, InvalidPasswordError } from '@/lib/api'
+import { castVote, InvalidPasswordError, saveOpinion } from '@/lib/api'
 import { session } from '@/lib/session'
 import { cn } from '@/lib/utils'
 import { HouseScreen } from '@/screens/house-screen'
 import { ListScreen } from '@/screens/list-screen'
+import { OpinionsScreen } from '@/screens/opinions-screen'
 import { LockScreen } from '@/screens/lock-screen'
 import { ReviewScreen } from '@/screens/review-screen'
 import { WhoScreen } from '@/screens/who-screen'
 
-type View = 'who' | 'list' | 'house' | 'review'
+type View = 'who' | 'list' | 'house' | 'opinions' | 'review'
 
 /** Phone-width column; `wide` lets the house and review screens use desktop space. */
 function Shell({ children, wide = false }: { children: React.ReactNode; wide?: boolean }) {
@@ -56,6 +57,7 @@ export default function App() {
   /** Unsent changes per participant; without a draft, the saved vote is shown. */
   const [drafts, setDrafts] = useState<Record<string, Picks>>({})
   const [submitting, setSubmitting] = useState(false)
+  const [savingOpinion, setSavingOpinion] = useState(false)
   const [openListingId, setOpenListingId] = useState<string | null>(null)
 
   const standings = useMemo(() => (ballot ? computeStandings(ballot) : []), [ballot])
@@ -144,8 +146,37 @@ export default function App() {
     }
   }
 
+  const submitOpinion = async (listingId: string, body: string) => {
+    if (!participant || !password) return
+    setSavingOpinion(true)
+    try {
+      const result = await saveOpinion(password, participant.id, listingId, body)
+      toast(result.deleted ? 'Análise apagada' : 'Análise publicada')
+      await refresh()
+    } catch (error) {
+      if (error instanceof InvalidPasswordError) lock()
+      else toast('Não deu para salvar. Verifica a internet e tenta de novo.')
+    } finally {
+      setSavingOpinion(false)
+    }
+  }
+
+  const currentListing = ballot.listings[Math.min(index, listingCount - 1)]
+
   let screen: React.ReactNode
-  if (view === 'review') {
+  if (view === 'opinions' && participant && currentListing) {
+    screen = (
+      <OpinionsScreen
+        key={currentListing.id}
+        ballot={ballot}
+        participant={participant}
+        listing={currentListing}
+        saving={savingOpinion}
+        onBack={() => navigate('house')}
+        onSave={(body) => void submitOpinion(currentListing.id, body)}
+      />
+    )
+  } else if (view === 'review') {
     screen = (
       <ReviewScreen
         ballot={ballot}
@@ -183,6 +214,7 @@ export default function App() {
         onPick={(listingId, position) => updatePicks((p) => assignPick(p, listingId, position))}
         onOpenReview={() => navigate('review')}
         onOpenList={() => navigate('list')}
+        onOpenOpinions={() => navigate('opinions')}
         onSignOut={signOut}
       />
     )
