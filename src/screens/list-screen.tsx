@@ -40,7 +40,7 @@ export function ListScreen({ ballot, participant, picks, hasVoted, onOpenListing
           <span className="text-[13px] text-muted-foreground">{plural(listings.length, 'opção', 'opções')}</span>
         </div>
 
-        <ul className="grid gap-3 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
           {listings.map((listing, index) => {
             const position = picks.indexOf(listing.id)
             const split = listing.totalPrice ? splitPrice(listing.totalPrice, participants) : null
@@ -51,12 +51,12 @@ export function ListScreen({ ballot, participant, picks, hasVoted, onOpenListing
               listing.beachAccess,
             ].filter(Boolean)
             return (
-              <li key={listing.id} className="flex">
+              <li key={listing.id} className="flex min-w-0">
                 <button
                   type="button"
                   onClick={() => onOpenListing(index)}
                   className={cn(
-                    'flex h-full w-full gap-3 overflow-hidden rounded-[14px] border bg-background p-2 text-left outline-none transition-colors hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 md:flex-col md:gap-0 md:p-0',
+                    'flex h-full w-full min-w-0 gap-3 overflow-hidden rounded-[14px] border bg-background p-2 text-left outline-none transition-colors hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 md:flex-col md:gap-0 md:p-0',
                     position >= 0 && 'border-primary ring-1 ring-primary',
                   )}
                 >
@@ -81,7 +81,7 @@ export function ListScreen({ ballot, participant, picks, hasVoted, onOpenListing
                     )}
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 py-1 pr-1 md:justify-start md:p-4">
-                    <span className="line-clamp-2 text-[15px] leading-snug font-semibold md:text-[17px]">
+                    <span className="line-clamp-2 text-[15px] leading-snug font-semibold [overflow-wrap:anywhere] md:text-[17px]">
                       {listing.name}
                     </span>
                     <span className="truncate text-[12.5px] text-muted-foreground">{listing.location}</span>
