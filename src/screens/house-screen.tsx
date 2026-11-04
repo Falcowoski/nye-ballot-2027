@@ -1,4 +1,4 @@
-import { LayoutGrid, Star } from 'lucide-react'
+import { Check, LayoutGrid, Star } from 'lucide-react'
 
 import { Avatar } from '@/components/avatar'
 import { ParticipantBadge } from '@/components/participant-badge'
@@ -142,6 +142,25 @@ export function HouseScreen({
               <p className="text-sm leading-relaxed">
                 <b className="font-semibold">Análise:</b> {listing.note}
               </p>
+            )}
+
+            {listing.highlights?.length > 0 && (
+              <section aria-labelledby="highlights-title" className="flex flex-col gap-1.5">
+                <h2
+                  id="highlights-title"
+                  className="text-[11.5px] font-semibold tracking-[0.08em] text-muted-foreground uppercase"
+                >
+                  Do anúncio
+                </h2>
+                <ul className="flex flex-col gap-1 text-sm">
+                  {listing.highlights.map((item) => (
+                    <li key={item} className="flex gap-2">
+                      <Check className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </section>
             )}
           </article>
 

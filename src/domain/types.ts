@@ -18,6 +18,8 @@ export type Listing = {
   rating: number | null
   reviewCount: number | null
   note: string | null
+  /** Short points taken from the Airbnb description. */
+  highlights: string[]
   suggestedBy: string | null
   photos: string[]
 }
