@@ -49,12 +49,12 @@ export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenRe
               listing.beachAccess,
             ].filter(Boolean)
             return (
-              <li key={listing.id}>
+              <li key={listing.id} className="flex">
                 <button
                   type="button"
                   onClick={() => onOpenListing(index)}
                   className={cn(
-                    'flex w-full gap-3 overflow-hidden rounded-[14px] border bg-background p-2 text-left outline-none transition-colors hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 md:flex-col md:gap-0 md:p-0',
+                    'flex h-full w-full gap-3 overflow-hidden rounded-[14px] border bg-background p-2 text-left outline-none transition-colors hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 md:flex-col md:gap-0 md:p-0',
                     position >= 0 && 'border-primary ring-1 ring-primary',
                   )}
                 >
@@ -78,7 +78,7 @@ export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenRe
                       </span>
                     )}
                   </span>
-                  <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 py-1 pr-1 md:p-4">
+                  <span className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 py-1 pr-1 md:justify-start md:p-4">
                     <span className="line-clamp-2 text-[15px] leading-snug font-semibold md:text-[17px]">
                       {listing.name}
                     </span>
@@ -97,7 +97,7 @@ export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenRe
                       <span className="truncate text-xs text-muted-foreground">{facts.join(' · ')}</span>
                     )}
                     {analyses > 0 && (
-                      <span className="mt-0.5 flex items-center gap-1 text-xs font-medium text-primary">
+                      <span className="mt-0.5 flex items-center gap-1 text-xs font-medium text-primary md:mt-auto md:pt-2">
                         <MessageSquare className="size-3.5" aria-hidden="true" />
                         {plural(analyses, 'análise', 'análises')}
                       </span>
