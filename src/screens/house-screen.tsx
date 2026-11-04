@@ -16,6 +16,8 @@ type Props = {
   ballot: Ballot
   index: number
   picks: Picks
+  /** The participant already sent a vote, so the review button offers to update it. */
+  hasVoted: boolean
   onIndexChange: (index: number) => void
   onPick: (listingId: string, position: number | null) => void
   onOpenReview: () => void
@@ -27,6 +29,7 @@ export function HouseScreen({
   ballot,
   index,
   picks,
+  hasVoted,
   onIndexChange,
   onPick,
   onOpenReview,
@@ -233,7 +236,7 @@ export function HouseScreen({
               </Button>
               {pickCount > 0 ? (
                 <Button variant="outline" size="sm" onClick={onOpenReview}>
-                  Revisar voto · {pickCount}
+                  {hasVoted ? 'Atualizar voto' : 'Revisar voto'} · {pickCount}
                 </Button>
               ) : (
                 <span />

@@ -97,6 +97,7 @@ export default function App() {
   const participant = ballot.participants.find((p) => p.id === participantId && p.isConfirmed) ?? null
   const picks = participant ? (drafts[participant.id] ?? picksFromVote(ballot, participant.id)) : emptyPicks()
   const listingCount = ballot.listings.length
+  const hasVoted = !!participant && ballot.votes.some((v) => v.participantId === participant.id)
   const openIndex = standings.findIndex((s) => s.listing.id === openListingId)
 
   const navigate = (next: View, nextIndex = index) => {
@@ -198,6 +199,7 @@ export default function App() {
         ballot={ballot}
         participant={participant}
         picks={picks}
+        hasVoted={hasVoted}
         onOpenListing={(next) => navigate('house', next)}
         onOpenReview={() => navigate('review')}
         onSignOut={signOut}
@@ -209,6 +211,7 @@ export default function App() {
         ballot={ballot}
         index={Math.min(index, listingCount - 1)}
         picks={picks}
+        hasVoted={hasVoted}
         onIndexChange={(next) => navigate('house', next)}
         onPick={(listingId, position) => updatePicks((p) => assignPick(p, listingId, position))}
         onOpenReview={() => navigate('review')}

@@ -13,12 +13,14 @@ type Props = {
   ballot: Ballot
   participant: Participant
   picks: Picks
+  /** The participant already sent a vote, so the review button offers to update it. */
+  hasVoted: boolean
   onOpenListing: (index: number) => void
   onOpenReview: () => void
   onSignOut: () => void
 }
 
-export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenReview, onSignOut }: Props) {
+export function ListScreen({ ballot, participant, picks, hasVoted, onOpenListing, onOpenReview, onSignOut }: Props) {
   const { listings, participants } = ballot
   const slots = requiredPicks(listings.length)
   const nameOf = (id: string | null) => listings.find((l) => l.id === id)?.name
@@ -129,7 +131,7 @@ export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenRe
           })}
         </ol>
         <Button onClick={onOpenReview} className="md:w-48">
-          Revisar voto
+          {hasVoted ? 'Atualizar voto' : 'Revisar voto'}
         </Button>
       </div>
     </div>
