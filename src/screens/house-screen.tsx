@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { formatDecimal, plural } from '@/domain/format'
 import { NOTE_AUTHOR_NAME, opinionsFor } from '@/domain/opinions'
-import { requiredPicks } from '@/domain/standings'
+import { compactPicks, requiredPicks } from '@/domain/standings'
 import type { Ballot, Picks } from '@/domain/types'
 import { cn } from '@/lib/utils'
 
@@ -43,6 +43,7 @@ export function HouseScreen({
   const opinions = opinionsFor(ballot, listing.id)
   const participantName = (id: string) => participants.find((p) => p.id === id)?.name ?? '?'
   const isLast = index === total - 1
+  const pickCount = compactPicks(picks).length
 
   const facts = [
     listing.bedrooms != null && plural(listing.bedrooms, 'quarto', 'quartos'),
@@ -221,19 +222,30 @@ export function HouseScreen({
                 )
               })}
             </ToggleGroup>
-            <div className="flex justify-between">
-              <Button variant="ghost" className="px-3" disabled={index === 0} onClick={() => onIndexChange(index - 1)}>
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+              <Button
+                variant="ghost"
+                className="justify-self-start px-3"
+                disabled={index === 0}
+                onClick={() => onIndexChange(index - 1)}
+              >
                 ‹ Anterior
               </Button>
-              {isLast ? (
-                <Button variant="ghost" className="px-3" onClick={onOpenReview}>
-                  Revisar voto ›
+              {pickCount > 0 ? (
+                <Button variant="outline" size="sm" onClick={onOpenReview}>
+                  Revisar voto · {pickCount}
                 </Button>
               ) : (
-                <Button variant="ghost" className="px-3" onClick={() => onIndexChange(index + 1)}>
-                  Próxima ›
-                </Button>
+                <span />
               )}
+              <Button
+                variant="ghost"
+                className="justify-self-end px-3"
+                disabled={isLast}
+                onClick={() => onIndexChange(index + 1)}
+              >
+                Próxima ›
+              </Button>
             </div>
           </div>
         </div>
