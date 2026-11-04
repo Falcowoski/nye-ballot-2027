@@ -1,8 +1,7 @@
-import { Check, ExternalLink, LayoutGrid, Star } from 'lucide-react'
+import { Check, ExternalLink, Star } from 'lucide-react'
 
 import { Avatar } from '@/components/avatar'
 import { FirstImpressionsHeader } from '@/components/first-impressions'
-import { ParticipantBadge } from '@/components/participant-badge'
 import { PhotoCarousel } from '@/components/photo-carousel'
 import { PriceBlock } from '@/components/price-block'
 import { Button } from '@/components/ui/button'
@@ -10,12 +9,11 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { formatDecimal, plural } from '@/domain/format'
 import { NOTE_AUTHOR_NAME, opinionsFor } from '@/domain/opinions'
 import { requiredPicks } from '@/domain/standings'
-import type { Ballot, Participant, Picks } from '@/domain/types'
+import type { Ballot, Picks } from '@/domain/types'
 import { cn } from '@/lib/utils'
 
 type Props = {
   ballot: Ballot
-  participant: Participant
   index: number
   picks: Picks
   onIndexChange: (index: number) => void
@@ -23,12 +21,10 @@ type Props = {
   onOpenReview: () => void
   onOpenList: () => void
   onOpenOpinions: () => void
-  onSignOut: () => void
 }
 
 export function HouseScreen({
   ballot,
-  participant,
   index,
   picks,
   onIndexChange,
@@ -36,7 +32,6 @@ export function HouseScreen({
   onOpenReview,
   onOpenList,
   onOpenOpinions,
-  onSignOut,
 }: Props) {
   const { listings, participants } = ballot
   const listing = listings[index]
@@ -68,22 +63,16 @@ export function HouseScreen({
             <span key={l.id} className={cn('h-1 rounded-full', i <= index ? 'bg-primary' : 'bg-border')} />
           ))}
         </div>
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex min-h-11 min-w-0 items-center gap-2">
-            <ParticipantBadge participant={participant} onSignOut={onSignOut} />
-            <span className="hidden shrink-0 text-sm text-muted-foreground sm:inline">
-              casa {index + 1} de {total}
-            </span>
-          </div>
-          <div className="flex shrink-0 gap-2">
-            <Button variant="outline" size="sm" onClick={onOpenList}>
-              <LayoutGrid />
-              Casas
-            </Button>
-            <Button variant="outline" size="sm" onClick={onOpenReview}>
-              Ranking
-            </Button>
-          </div>
+        <div className="grid min-h-11 grid-cols-[1fr_auto_1fr] items-center gap-2">
+          <Button variant="ghost" size="sm" className="-ml-2 justify-self-start" onClick={onOpenList}>
+            ‹ Casas
+          </Button>
+          <span className="text-[13px] text-muted-foreground tabular-nums">
+            casa {index + 1} de {total}
+          </span>
+          <Button variant="outline" size="sm" className="justify-self-end" onClick={onOpenReview}>
+            Ranking
+          </Button>
         </div>
       </header>
 

@@ -207,7 +207,6 @@ export default function App() {
     screen = (
       <HouseScreen
         ballot={ballot}
-        participant={participant}
         index={Math.min(index, listingCount - 1)}
         picks={picks}
         onIndexChange={(next) => navigate('house', next)}
@@ -215,7 +214,6 @@ export default function App() {
         onOpenReview={() => navigate('review')}
         onOpenList={() => navigate('list')}
         onOpenOpinions={() => navigate('opinions')}
-        onSignOut={signOut}
       />
     )
   } else {
