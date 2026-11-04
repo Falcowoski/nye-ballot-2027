@@ -62,17 +62,17 @@ function Body({ ballot, standing, rank, onViewListing }: Omit<Props, 'onClose'> 
 
   return (
     <>
-      <DrawerHeader className="flex-row items-center gap-3">
+      <DrawerHeader className="flex-row items-center gap-3 md:px-6 md:pt-6">
         <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-xl font-bold text-primary-foreground">
           {rank}
         </span>
         <div className="flex min-w-0 flex-col gap-0.5">
-          <DrawerTitle className="truncate">{standing.listing.name}</DrawerTitle>
+          <DrawerTitle className="line-clamp-2 leading-snug md:text-xl">{standing.listing.name}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
         </div>
       </DrawerHeader>
 
-      <Tabs defaultValue="all" className="min-h-0 flex-1 px-4 pt-3">
+      <Tabs defaultValue="all" className="min-h-0 flex-1 px-4 pt-3 md:px-6 md:pt-4">
         <TabsList>
           {tabs.map((t) => (
             <TabsTrigger key={t.value} value={t.value}>
@@ -81,7 +81,11 @@ function Body({ ballot, standing, rank, onViewListing }: Omit<Props, 'onClose'> 
           ))}
         </TabsList>
         {tabs.map((t) => (
-          <TabsContent key={t.value} value={t.value} className="max-h-[42dvh] overflow-y-auto">
+          <TabsContent
+            key={t.value}
+            value={t.value}
+            className="max-h-[42dvh] overflow-y-auto md:max-h-[55dvh] md:min-h-56"
+          >
             {t.items.length === 0 ? (
               <p className="py-6 text-center text-sm text-muted-foreground">{t.empty}</p>
             ) : (
@@ -107,7 +111,7 @@ function Body({ ballot, standing, rank, onViewListing }: Omit<Props, 'onClose'> 
       </Tabs>
 
       {onViewListing && (
-        <div className="p-4">
+        <div className="p-4 md:px-6 md:pb-6">
           <Button variant="outline" className="w-full" onClick={() => onViewListing(standing.listing.id)}>
             Ver a casa
           </Button>

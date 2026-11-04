@@ -11,7 +11,10 @@ function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimi
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
-      className={cn('flex gap-1 overflow-x-auto border-b border-border', className)}
+      className={cn(
+        'flex gap-1 overflow-x-auto overflow-y-hidden border-b border-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        className,
+      )}
       {...props}
     />
   )
