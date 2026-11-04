@@ -1,0 +1,74 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Single light look, taken from the C wireframes */
+:root {
+  color-scheme: light;
+  --radius: 0.75rem;
+  --background: #ffffff;
+  --foreground: #1a1f23;
+  --muted: #f3f5f6;
+  --muted-foreground: #5e676f;
+  --border: #d9dee2;
+  --border-strong: #c9d0d5;
+  --input: #d9dee2;
+  --ring: #0b6b74;
+  --primary: #0b6b74;
+  --primary-foreground: #ffffff;
+  --accent: #e1f0f1;
+  --accent-foreground: #0b6b74;
+  --placeholder: #e4e8eb;
+  --warning: #8a5a00;
+  --overlay: rgba(12, 18, 22, 0.45);
+}
+
+@theme inline {
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-placeholder: var(--placeholder);
+  --color-warning: var(--warning);
+  --color-overlay: var(--overlay);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html,
+  body {
+    @apply bg-muted text-foreground font-sans antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #root {
+    min-height: 100dvh;
+  }
+  h1,
+  h2 {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
