@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "images": {
+    "sizes": [480, 828, 1200, 1920],
+    "formats": ["image/webp"],
+    "minimumCacheTTL": 86400,
+    "remotePatterns": [{ "protocol": "https", "hostname": "a0.muscache.com", "pathname": "/im/pictures/**" }]
+  }
+}
