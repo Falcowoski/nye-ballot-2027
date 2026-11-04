@@ -4,7 +4,7 @@ import { ParticipantBadge } from '@/components/participant-badge'
 import { Button } from '@/components/ui/button'
 import { formatBrl, formatDateTime } from '@/domain/format'
 import { splitPrice } from '@/domain/pricing'
-import { isComplete, requiredPicks, samePicks, type Standing } from '@/domain/standings'
+import { compactPicks, hasPicks, requiredPicks, samePicks, type Standing } from '@/domain/standings'
 import type { Ballot, Participant, Picks } from '@/domain/types'
 import { cn } from '@/lib/utils'
 
@@ -38,7 +38,8 @@ export function ReviewScreen({
   const { listings, participants, votes } = ballot
   const slots = requiredPicks(listings.length)
   const myVote = participant ? votes.find((v) => v.participantId === participant.id) : undefined
-  const complete = isComplete(picks, listings.length)
+  const complete = hasPicks(picks)
+  const pickCount = compactPicks(picks).length
   const unchanged = samePicks(picks.slice(0, slots), myVote?.ranking)
   const votedIds = new Set(votes.map((v) => v.participantId))
   const votedCount = participants.filter((p) => votedIds.has(p.id)).length
@@ -52,7 +53,7 @@ export function ReviewScreen({
   const submitLabel = submitting
     ? 'Enviando…'
     : !complete
-      ? `Escolha ${slots} casas`
+      ? 'Escolha ao menos 1 casa'
       : myVote && unchanged
         ? 'Voto enviado'
         : myVote
@@ -137,6 +138,11 @@ export function ReviewScreen({
               {myVote && unchanged && !submitting && <Check />}
               {submitLabel}
             </Button>
+            {complete && pickCount < slots && !(myVote && unchanged) && (
+              <p className="text-center text-xs text-muted-foreground">
+                Tudo bem votar em {pickCount === 1 ? 'uma casa só' : 'menos de 3 casas'}.
+              </p>
+            )}
             {myVote && (
               <p className="text-center text-xs text-muted-foreground">
                 Último voto em {formatDateTime(myVote.updatedAt)}. Você pode trocar quando quiser.

@@ -222,15 +222,15 @@ export function HouseScreen({
               })}
             </ToggleGroup>
             <div className="flex justify-between">
-              <Button variant="ghost" className="px-2" disabled={index === 0} onClick={() => onIndexChange(index - 1)}>
+              <Button variant="ghost" className="px-3" disabled={index === 0} onClick={() => onIndexChange(index - 1)}>
                 ‹ Anterior
               </Button>
               {isLast ? (
-                <Button variant="ghost" className="px-2" onClick={onOpenReview}>
+                <Button variant="ghost" className="px-3" onClick={onOpenReview}>
                   Revisar voto ›
                 </Button>
               ) : (
-                <Button variant="ghost" className="px-2" onClick={() => onIndexChange(index + 1)}>
+                <Button variant="ghost" className="px-3" onClick={() => onIndexChange(index + 1)}>
                   Próxima ›
                 </Button>
               )}

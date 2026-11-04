@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 
 import { StandingDrawer } from '@/components/standing-drawer'
 import { Button } from '@/components/ui/button'
-import { assignPick, computeStandings, emptyPicks, movePick, requiredPicks, TOP_N } from '@/domain/standings'
+import { assignPick, compactPicks, computeStandings, emptyPicks, movePick, TOP_N } from '@/domain/standings'
 import type { Ballot, Picks } from '@/domain/types'
 import { useBallot } from '@/hooks/use-ballot'
 import { castVote, InvalidPasswordError, saveOpinion } from '@/lib/api'
@@ -135,7 +135,7 @@ export default function App() {
     if (!participant || !password) return
     setSubmitting(true)
     try {
-      await castVote(password, participant.id, picks.slice(0, requiredPicks(listingCount)) as string[])
+      await castVote(password, participant.id, compactPicks(picks))
       toast('Voto enviado')
       await refresh()
     } catch (error) {

@@ -58,8 +58,13 @@ export function movePick(picks: Picks, from: number, to: number): Picks {
   return next
 }
 
-export const isComplete = (picks: Picks, listingCount: number) =>
-  picks.slice(0, requiredPicks(listingCount)).every(Boolean)
+/** The picks in order, with empty positions removed: what gets sent as the vote. */
+export const compactPicks = (picks: Picks): string[] => picks.filter((id): id is string => !!id)
 
-export const samePicks = (a: Picks, b: string[] | undefined) =>
-  !!b && b.length === a.filter(Boolean).length && b.every((id, i) => a[i] === id)
+/** A vote can rank 1 to 3 houses. */
+export const hasPicks = (picks: Picks) => compactPicks(picks).length > 0
+
+export const samePicks = (a: Picks, b: string[] | undefined) => {
+  const compact = compactPicks(a)
+  return !!b && b.length === compact.length && b.every((id, i) => compact[i] === id)
+}
