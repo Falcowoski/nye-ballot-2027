@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react'
+import { LayoutGrid, Star } from 'lucide-react'
 
 import { Avatar } from '@/components/avatar'
 import { PhotoCarousel } from '@/components/photo-carousel'
@@ -18,10 +18,21 @@ type Props = {
   onIndexChange: (index: number) => void
   onPick: (listingId: string, position: number | null) => void
   onOpenReview: () => void
+  onOpenList: () => void
   onChangePerson: () => void
 }
 
-export function HouseScreen({ ballot, participant, index, picks, onIndexChange, onPick, onOpenReview, onChangePerson }: Props) {
+export function HouseScreen({
+  ballot,
+  participant,
+  index,
+  picks,
+  onIndexChange,
+  onPick,
+  onOpenReview,
+  onOpenList,
+  onChangePerson,
+}: Props) {
   const { listings, participants } = ballot
   const listing = listings[index]
   const total = listings.length
@@ -39,9 +50,13 @@ export function HouseScreen({ ballot, participant, index, picks, onIndexChange, 
   ].filter(Boolean) as string[]
 
   return (
-    <div className="flex min-h-dvh flex-col pb-[calc(11.5rem+env(safe-area-inset-bottom))]">
-      <header className="sticky top-0 z-20 flex flex-col gap-2 bg-background/95 px-4 pt-[calc(0.75rem+env(safe-area-inset-top))] pb-2 backdrop-blur">
-        <div aria-hidden="true" className="grid gap-1" style={{ gridTemplateColumns: `repeat(${total}, minmax(0, 1fr))` }}>
+    <div className="flex min-h-dvh flex-col pb-[calc(11.5rem+env(safe-area-inset-bottom))] md:pb-10">
+      <header className="sticky top-0 z-20 flex flex-col gap-2 bg-background/95 px-4 pt-[calc(0.75rem+env(safe-area-inset-top))] pb-2 backdrop-blur md:px-8 md:pb-3">
+        <div
+          aria-hidden="true"
+          className="grid gap-1"
+          style={{ gridTemplateColumns: `repeat(${total}, minmax(0, 1fr))` }}
+        >
           {listings.map((l, i) => (
             <span key={l.id} className={cn('h-1 rounded-full', i <= index ? 'bg-primary' : 'bg-border')} />
           ))}
@@ -50,116 +65,136 @@ export function HouseScreen({ ballot, participant, index, picks, onIndexChange, 
           <button
             type="button"
             onClick={onChangePerson}
-            className="flex min-h-11 min-w-0 items-center gap-2 rounded-md text-sm font-semibold outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40"
+            className="flex min-h-11 min-w-0 items-center gap-2 rounded-md text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={`Votando como ${participant.name}. Trocar pessoa`}
           >
             <Avatar name={participant.name} />
             <span className="truncate">{participant.name}</span>
-            <span className="shrink-0 font-normal text-muted-foreground">
+            <span className="hidden shrink-0 font-normal text-muted-foreground sm:inline">
               · casa {index + 1} de {total}
             </span>
           </button>
-          <Button variant="outline" size="sm" onClick={onOpenReview}>
-            Ranking
-          </Button>
+          <div className="flex shrink-0 gap-2">
+            <Button variant="outline" size="sm" onClick={onOpenList}>
+              <LayoutGrid />
+              Casas
+            </Button>
+            <Button variant="outline" size="sm" onClick={onOpenReview}>
+              Ranking
+            </Button>
+          </div>
         </div>
       </header>
 
-      <PhotoCarousel key={listing.id} photos={listing.photos} label={listing.name} />
+      <div className="md:grid md:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] md:items-start md:gap-8 md:px-8 md:pt-2">
+        <PhotoCarousel
+          key={listing.id}
+          photos={listing.photos}
+          label={listing.name}
+          className="md:sticky md:top-[92px] md:rounded-2xl"
+        />
 
-      <article className="flex flex-col gap-3 p-4">
-        <div className="flex flex-col gap-0.5">
-          <h1 className="text-[22px] leading-tight font-bold">{listing.name}</h1>
-          <p className="text-[13.5px] text-muted-foreground">
-            {listing.location}
-            {listing.airbnbUrl && (
-              <>
-                {' · '}
-                <a
-                  href={listing.airbnbUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline-offset-2 hover:text-foreground hover:underline"
-                >
-                  Airbnb ↗
-                </a>
-              </>
+        <div className="md:flex md:flex-col md:gap-5">
+          <article className="flex flex-col gap-3 p-4 md:p-0">
+            <div className="flex flex-col gap-0.5">
+              <h1 className="text-[22px] leading-tight font-bold">{listing.name}</h1>
+              <p className="text-[13.5px] text-muted-foreground">
+                {listing.location}
+                {listing.airbnbUrl && (
+                  <>
+                    {' · '}
+                    <a
+                      href={listing.airbnbUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline-offset-2 hover:text-foreground hover:underline"
+                    >
+                      Airbnb ↗
+                    </a>
+                  </>
+                )}
+              </p>
+              {suggester && (
+                <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                  <Avatar name={suggester.name} size="sm" />
+                  Indicada por <b className="font-semibold text-foreground">{suggester.name}</b>
+                </p>
+              )}
+            </div>
+
+            <PriceBlock totalPrice={listing.totalPrice} participants={participants} />
+
+            {(facts.length > 0 || listing.rating != null) && (
+              <ul className="flex flex-wrap gap-1.5">
+                {facts.map((fact) => (
+                  <li key={fact} className="rounded-full border px-2 py-0.5 text-xs">
+                    {fact}
+                  </li>
+                ))}
+                {listing.rating != null && (
+                  <li className="flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs">
+                    <Star className="size-3 fill-current" aria-hidden="true" />
+                    {formatDecimal(listing.rating)}
+                    {listing.reviewCount != null && (
+                      <span className="text-muted-foreground">({listing.reviewCount})</span>
+                    )}
+                  </li>
+                )}
+              </ul>
             )}
-          </p>
-          {suggester && (
-            <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-muted-foreground">
-              <Avatar name={suggester.name} size="sm" />
-              Indicada por <b className="font-semibold text-foreground">{suggester.name}</b>
+
+            {listing.note && (
+              <p className="text-sm leading-relaxed">
+                <b className="font-semibold">Análise:</b> {listing.note}
+              </p>
+            )}
+          </article>
+
+          <div className="fixed inset-x-0 bottom-0 z-30 mx-auto flex max-w-[440px] flex-col gap-2.5 border-t bg-background px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] md:static md:mx-0 md:max-w-none md:rounded-2xl md:border md:bg-muted md:p-4">
+            <p id="position-label" className="text-[13px] font-semibold text-muted-foreground">
+              Em que posição essa fica?
             </p>
-          )}
-        </div>
-
-        <PriceBlock totalPrice={listing.totalPrice} participants={participants} />
-
-        {(facts.length > 0 || listing.rating != null) && (
-          <ul className="flex flex-wrap gap-1.5">
-            {facts.map((fact) => (
-              <li key={fact} className="rounded-full border px-2 py-0.5 text-xs">
-                {fact}
-              </li>
-            ))}
-            {listing.rating != null && (
-              <li className="flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs">
-                <Star className="size-3 fill-current" aria-hidden="true" />
-                {formatDecimal(listing.rating)}
-                {listing.reviewCount != null && <span className="text-muted-foreground">({listing.reviewCount})</span>}
-              </li>
-            )}
-          </ul>
-        )}
-
-        {listing.note && (
-          <p className="text-sm leading-relaxed">
-            <b className="font-semibold">Análise:</b> {listing.note}
-          </p>
-        )}
-      </article>
-
-      <div className="fixed inset-x-0 bottom-0 z-30 mx-auto flex max-w-[440px] flex-col gap-2.5 border-t bg-background px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-        <p id="position-label" className="text-[13px] font-semibold text-muted-foreground">
-          Em que posição essa fica?
-        </p>
-        <ToggleGroup
-          type="single"
-          aria-labelledby="position-label"
-          value={myPosition >= 0 ? String(myPosition) : ''}
-          onValueChange={(value) => onPick(listing.id, value === '' ? null : Number(value))}
-          style={{ gridTemplateColumns: `repeat(${slots}, minmax(0, 1fr))` }}
-        >
-          {Array.from({ length: slots }, (_, position) => {
-            const holder = picks[position]
-            const takenByOther = !!holder && holder !== listing.id
-            const sub = holder === listing.id ? 'esta casa' : holder ? nameOf(holder) : 'livre'
-            return (
-              <ToggleGroupItem
-                key={position}
-                value={String(position)}
-                className={cn('h-[60px]', takenByOther && 'border-dashed border-border-strong bg-muted text-muted-foreground')}
-              >
-                <span className="text-[17px] font-bold">{position + 1}º</span>
-                <span className="max-w-full truncate text-[11.5px]">{sub}</span>
-              </ToggleGroupItem>
-            )
-          })}
-        </ToggleGroup>
-        <div className="flex justify-between">
-          <Button variant="ghost" className="px-2" disabled={index === 0} onClick={() => onIndexChange(index - 1)}>
-            ‹ Anterior
-          </Button>
-          {isLast ? (
-            <Button variant="ghost" className="px-2" onClick={onOpenReview}>
-              Revisar voto ›
-            </Button>
-          ) : (
-            <Button variant="ghost" className="px-2" onClick={() => onIndexChange(index + 1)}>
-              Próxima ›
-            </Button>
-          )}
+            <ToggleGroup
+              type="single"
+              aria-labelledby="position-label"
+              value={myPosition >= 0 ? String(myPosition) : ''}
+              onValueChange={(value) => onPick(listing.id, value === '' ? null : Number(value))}
+              style={{ gridTemplateColumns: `repeat(${slots}, minmax(0, 1fr))` }}
+            >
+              {Array.from({ length: slots }, (_, position) => {
+                const holder = picks[position]
+                const takenByOther = !!holder && holder !== listing.id
+                const sub = holder === listing.id ? 'esta casa' : holder ? nameOf(holder) : 'livre'
+                return (
+                  <ToggleGroupItem
+                    key={position}
+                    value={String(position)}
+                    className={cn(
+                      'h-[60px]',
+                      takenByOther && 'border-dashed border-border-strong bg-muted text-muted-foreground',
+                    )}
+                  >
+                    <span className="text-[17px] font-bold">{position + 1}º</span>
+                    <span className="max-w-full truncate text-[11.5px]">{sub}</span>
+                  </ToggleGroupItem>
+                )
+              })}
+            </ToggleGroup>
+            <div className="flex justify-between">
+              <Button variant="ghost" className="px-2" disabled={index === 0} onClick={() => onIndexChange(index - 1)}>
+                ‹ Anterior
+              </Button>
+              {isLast ? (
+                <Button variant="ghost" className="px-2" onClick={onOpenReview}>
+                  Revisar voto ›
+                </Button>
+              ) : (
+                <Button variant="ghost" className="px-2" onClick={() => onIndexChange(index + 1)}>
+                  Próxima ›
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

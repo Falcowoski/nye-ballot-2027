@@ -13,7 +13,11 @@ function RadioGroupCard({ className, ...props }: React.ComponentProps<typeof Rad
     <RadioGroupPrimitive.Item
       data-slot="radio-group-card"
       className={cn(
-        'flex min-w-0 flex-col items-start justify-center rounded-lg border border-border bg-background px-3.5 text-left outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/40 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground disabled:cursor-not-allowed disabled:border-dashed disabled:border-border-strong disabled:bg-muted disabled:text-muted-foreground',
+        'flex min-w-0 cursor-pointer flex-col items-start justify-center rounded-lg border border-border bg-background px-3.5 text-left outline-none transition-colors',
+        'hover:border-primary/60 hover:bg-accent',
+        'focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        'data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
+        'disabled:cursor-not-allowed disabled:border-dashed disabled:border-border-strong disabled:bg-muted disabled:text-muted-foreground',
         className,
       )}
       {...props}

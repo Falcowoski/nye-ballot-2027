@@ -8,15 +8,27 @@ import type { Ballot, Picks } from '@/domain/types'
 import { useBallot } from '@/hooks/use-ballot'
 import { castVote, InvalidPasswordError } from '@/lib/api'
 import { session } from '@/lib/session'
+import { cn } from '@/lib/utils'
 import { HouseScreen } from '@/screens/house-screen'
+import { ListScreen } from '@/screens/list-screen'
 import { LockScreen } from '@/screens/lock-screen'
 import { ReviewScreen } from '@/screens/review-screen'
 import { WhoScreen } from '@/screens/who-screen'
 
-type View = 'who' | 'house' | 'review'
+type View = 'who' | 'list' | 'house' | 'review'
 
-function Shell({ children }: { children: React.ReactNode }) {
-  return <div className="mx-auto min-h-dvh max-w-[440px] bg-background shadow-[0_0_0_1px_var(--border)]">{children}</div>
+/** Phone-width column; `wide` lets the house and review screens use desktop space. */
+function Shell({ children, wide = false }: { children: React.ReactNode; wide?: boolean }) {
+  return (
+    <div
+      className={cn(
+        'mx-auto min-h-dvh max-w-[440px] bg-background shadow-[0_0_0_1px_var(--border)]',
+        wide && 'md:max-w-[1120px]',
+      )}
+    >
+      {children}
+    </div>
+  )
 }
 
 /** The participant's saved vote as picks, ignoring listings that are no longer active. */
@@ -39,7 +51,7 @@ export default function App() {
   const { ballot, status, refresh } = useBallot(password, lock)
 
   const [participantId, setParticipantId] = useState(() => session.getParticipant())
-  const [view, setView] = useState<View>(() => (session.getParticipant() ? 'house' : 'who'))
+  const [view, setView] = useState<View>(() => (session.getParticipant() ? 'list' : 'who'))
   const [index, setIndex] = useState(0)
   /** Unsent changes per participant; without a draft, the saved vote is shown. */
   const [drafts, setDrafts] = useState<Record<string, Picks>>({})
@@ -101,11 +113,14 @@ export default function App() {
     setParticipantId(id)
   }
 
-  const goToHouses = (listingId?: string) => {
-    const target = listingId
-      ? ballot.listings.findIndex((l) => l.id === listingId)
-      : ballot.listings.findIndex((l) => !picks.includes(l.id))
-    navigate('house', Math.max(0, target))
+  const openListing = (listingId: string) => {
+    navigate(
+      'house',
+      Math.max(
+        0,
+        ballot.listings.findIndex((l) => l.id === listingId),
+      ),
+    )
   }
 
   const submit = async () => {
@@ -133,11 +148,22 @@ export default function App() {
         picks={picks}
         submitting={submitting}
         onMove={(from, to) => updatePicks((p) => movePick(p, from, to))}
-        onChoose={() => goToHouses()}
+        onChoose={() => navigate('list')}
         onSubmit={() => void submit()}
-        onBack={() => navigate(participant && listingCount ? 'house' : 'who')}
+        onBack={() => navigate(participant && listingCount ? 'list' : 'who')}
         onChangePerson={() => navigate('who')}
         onOpenStanding={setOpenListingId}
+      />
+    )
+  } else if (view === 'list' && participant && listingCount > 0) {
+    screen = (
+      <ListScreen
+        ballot={ballot}
+        participant={participant}
+        picks={picks}
+        onOpenListing={(next) => navigate('house', next)}
+        onOpenReview={() => navigate('review')}
+        onChangePerson={() => navigate('who')}
       />
     )
   } else if (view === 'house' && participant && listingCount > 0) {
@@ -150,6 +176,7 @@ export default function App() {
         onIndexChange={(next) => navigate('house', next)}
         onPick={(listingId, position) => updatePicks((p) => assignPick(p, listingId, position))}
         onOpenReview={() => navigate('review')}
+        onOpenList={() => navigate('list')}
         onChangePerson={() => navigate('who')}
       />
     )
@@ -159,14 +186,16 @@ export default function App() {
         ballot={ballot}
         participantId={participant?.id ?? null}
         onSelect={selectParticipant}
-        onContinue={() => (listingCount ? goToHouses(ballot.listings[0].id) : navigate('review'))}
+        onContinue={() => navigate(listingCount ? 'list' : 'review')}
         onViewRanking={() => navigate('review')}
       />
     )
   }
 
+  const isWide = view === 'review' || ((view === 'house' || view === 'list') && !!participant && listingCount > 0)
+
   return (
-    <Shell>
+    <Shell wide={isWide}>
       {screen}
       <StandingDrawer
         ballot={ballot}
@@ -177,7 +206,7 @@ export default function App() {
           participant
             ? (listingId) => {
                 setOpenListingId(null)
-                goToHouses(listingId)
+                openListing(listingId)
               }
             : undefined
         }

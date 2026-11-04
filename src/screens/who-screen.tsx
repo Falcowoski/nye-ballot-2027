@@ -24,7 +24,9 @@ export function WhoScreen({ ballot, participantId, onSelect, onContinue, onViewR
           Escolha as 3 casas que você mais curtiu, em ordem. O valor por pessoa é aproximado.
         </p>
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-muted px-2.5 py-1 text-[13px]">{plural(ballot.listings.length, 'casa', 'casas')}</span>
+          <span className="rounded-full bg-muted px-2.5 py-1 text-[13px]">
+            {plural(ballot.listings.length, 'casa', 'casas')}
+          </span>
           <span className="rounded-full bg-muted px-2.5 py-1 text-[13px]">
             {votedCount} de {ballot.participants.length} já votaram
           </span>
@@ -51,7 +53,9 @@ export function WhoScreen({ ballot, participantId, onSelect, onContinue, onViewR
                   : 'ainda não votou'
             return (
               <RadioGroupCard key={p.id} value={p.id} disabled={!p.isConfirmed} className="group h-14">
-                <span className="w-full truncate text-[15px] font-semibold">{p.isConfirmed ? p.name : 'A confirmar'}</span>
+                <span className="w-full truncate text-[15px] font-semibold">
+                  {p.isConfirmed ? p.name : 'A confirmar'}
+                </span>
                 <span
                   className={cn(
                     'text-xs',

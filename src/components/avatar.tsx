@@ -7,7 +7,15 @@ const sizes = {
   lg: 'size-10 text-sm',
 }
 
-export function Avatar({ name, size = 'md', className }: { name: string; size?: keyof typeof sizes; className?: string }) {
+export function Avatar({
+  name,
+  size = 'md',
+  className,
+}: {
+  name: string
+  size?: keyof typeof sizes
+  className?: string
+}) {
   return (
     <span
       aria-hidden="true"

@@ -6,7 +6,8 @@ function Toaster(props: ToasterProps) {
       position="top-center"
       toastOptions={{
         classNames: {
-          toast: '!rounded-full !bg-foreground !text-background !border-0 !font-sans !text-sm !font-medium !py-2.5 !px-4 !w-auto !mx-auto',
+          toast:
+            '!rounded-full !bg-foreground !text-background !border-0 !font-sans !text-sm !font-medium !py-2.5 !px-4 !w-auto !mx-auto',
         },
       }}
       {...props}

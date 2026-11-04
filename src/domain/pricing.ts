@@ -40,7 +40,10 @@ export function splitPrice(totalPrice: number, participants: Participant[]): Pri
 /** "9 pessoas por 7 dias e 1 por 2 dias" */
 export function describeStays(participants: Participant[]) {
   const groups = stayGroups(participants)
-  const parts = groups.map((g, i) => `${g.count}${i === 0 ? (g.count === 1 ? ' pessoa' : ' pessoas') : ''} por ${g.days} ${g.days === 1 ? 'dia' : 'dias'}`)
+  const parts = groups.map(
+    (g, i) =>
+      `${g.count}${i === 0 ? (g.count === 1 ? ' pessoa' : ' pessoas') : ''} por ${g.days} ${g.days === 1 ? 'dia' : 'dias'}`,
+  )
   if (parts.length <= 1) return parts.join('')
   return `${parts.slice(0, -1).join(', ')} e ${parts[parts.length - 1]}`
 }

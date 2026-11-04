@@ -20,7 +20,9 @@ type Entry = { participantId: string; name: string; position: number; updatedAt:
 export function StandingDrawer({ ballot, standing, rank, onClose, onViewListing }: Props) {
   return (
     <Drawer open={!!standing} onOpenChange={(open) => !open && onClose()}>
-      <DrawerContent>{standing && <Body ballot={ballot} standing={standing} rank={rank} onViewListing={onViewListing} />}</DrawerContent>
+      <DrawerContent>
+        {standing && <Body ballot={ballot} standing={standing} rank={rank} onViewListing={onViewListing} />}
+      </DrawerContent>
     </Drawer>
   )
 }
@@ -31,7 +33,12 @@ function Body({ ballot, standing, rank, onViewListing }: Omit<Props, 'onClose'> 
 
   const entries: Entry[] = standing.voters
     .flatMap((ids, position) =>
-      ids.map((participantId) => ({ participantId, name: nameOf(participantId), position, updatedAt: updatedAtOf(participantId) })),
+      ids.map((participantId) => ({
+        participantId,
+        name: nameOf(participantId),
+        position,
+        updatedAt: updatedAtOf(participantId),
+      })),
     )
     .toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt))
 
@@ -84,9 +91,13 @@ function Body({ ballot, standing, rank, onViewListing }: Omit<Props, 'onClose'> 
                     <Avatar name={e.name} size="lg" />
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-[15px] font-medium">{e.name}</span>
-                      {e.updatedAt && <span className="text-[12.5px] text-muted-foreground">{formatDateTime(e.updatedAt)}</span>}
+                      {e.updatedAt && (
+                        <span className="text-[12.5px] text-muted-foreground">{formatDateTime(e.updatedAt)}</span>
+                      )}
                     </span>
-                    <span className="rounded-full border px-2.5 py-0.5 text-[13px] font-semibold">{e.position + 1}º</span>
+                    <span className="rounded-full border px-2.5 py-0.5 text-[13px] font-semibold">
+                      {e.position + 1}º
+                    </span>
                   </li>
                 ))}
               </ul>
