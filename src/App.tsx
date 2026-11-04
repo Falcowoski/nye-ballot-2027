@@ -108,6 +108,12 @@ export default function App() {
     setDrafts((all) => ({ ...all, [participant.id]: change(picks) }))
   }
 
+  const signOut = () => {
+    session.setParticipant(null)
+    setParticipantId(null)
+    navigate('who')
+  }
+
   const selectParticipant = (id: string) => {
     session.setParticipant(id)
     setParticipantId(id)
@@ -151,7 +157,7 @@ export default function App() {
         onChoose={() => navigate('list')}
         onSubmit={() => void submit()}
         onBack={() => navigate(participant && listingCount ? 'list' : 'who')}
-        onChangePerson={() => navigate('who')}
+        onSignOut={signOut}
         onOpenStanding={setOpenListingId}
       />
     )
@@ -163,7 +169,7 @@ export default function App() {
         picks={picks}
         onOpenListing={(next) => navigate('house', next)}
         onOpenReview={() => navigate('review')}
-        onChangePerson={() => navigate('who')}
+        onSignOut={signOut}
       />
     )
   } else if (view === 'house' && participant && listingCount > 0) {
@@ -177,7 +183,7 @@ export default function App() {
         onPick={(listingId, position) => updatePicks((p) => assignPick(p, listingId, position))}
         onOpenReview={() => navigate('review')}
         onOpenList={() => navigate('list')}
-        onChangePerson={() => navigate('who')}
+        onSignOut={signOut}
       />
     )
   } else {

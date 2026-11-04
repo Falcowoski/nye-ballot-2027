@@ -1,6 +1,6 @@
 import { ImageOff } from 'lucide-react'
 
-import { Avatar } from '@/components/avatar'
+import { ParticipantBadge } from '@/components/participant-badge'
 import { Button } from '@/components/ui/button'
 import { formatBrl, plural } from '@/domain/format'
 import { splitPrice } from '@/domain/pricing'
@@ -14,10 +14,10 @@ type Props = {
   picks: Picks
   onOpenListing: (index: number) => void
   onOpenReview: () => void
-  onChangePerson: () => void
+  onSignOut: () => void
 }
 
-export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenReview, onChangePerson }: Props) {
+export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenReview, onSignOut }: Props) {
   const { listings, participants } = ballot
   const slots = requiredPicks(listings.length)
   const nameOf = (id: string | null) => listings.find((l) => l.id === id)?.name
@@ -25,15 +25,7 @@ export function ListScreen({ ballot, participant, picks, onOpenListing, onOpenRe
   return (
     <div className="flex min-h-dvh flex-col pb-[calc(9.5rem+env(safe-area-inset-bottom))] md:pb-[calc(6.5rem+env(safe-area-inset-bottom))]">
       <header className="sticky top-0 z-20 flex items-center justify-between gap-2 bg-background/95 px-4 pt-[calc(0.75rem+env(safe-area-inset-top))] pb-2 backdrop-blur md:px-8 md:pb-3">
-        <button
-          type="button"
-          onClick={onChangePerson}
-          className="flex min-h-11 min-w-0 items-center gap-2 rounded-md text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          aria-label={`Votando como ${participant.name}. Trocar pessoa`}
-        >
-          <Avatar name={participant.name} />
-          <span className="truncate">{participant.name}</span>
-        </button>
+        <ParticipantBadge participant={participant} onSignOut={onSignOut} />
         <Button variant="outline" size="sm" onClick={onOpenReview}>
           Ranking
         </Button>

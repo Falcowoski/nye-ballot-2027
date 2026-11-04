@@ -1,6 +1,7 @@
 import { LayoutGrid, Star } from 'lucide-react'
 
 import { Avatar } from '@/components/avatar'
+import { ParticipantBadge } from '@/components/participant-badge'
 import { PhotoCarousel } from '@/components/photo-carousel'
 import { PriceBlock } from '@/components/price-block'
 import { Button } from '@/components/ui/button'
@@ -19,7 +20,7 @@ type Props = {
   onPick: (listingId: string, position: number | null) => void
   onOpenReview: () => void
   onOpenList: () => void
-  onChangePerson: () => void
+  onSignOut: () => void
 }
 
 export function HouseScreen({
@@ -31,7 +32,7 @@ export function HouseScreen({
   onPick,
   onOpenReview,
   onOpenList,
-  onChangePerson,
+  onSignOut,
 }: Props) {
   const { listings, participants } = ballot
   const listing = listings[index]
@@ -62,18 +63,12 @@ export function HouseScreen({
           ))}
         </div>
         <div className="flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={onChangePerson}
-            className="flex min-h-11 min-w-0 items-center gap-2 rounded-md text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label={`Votando como ${participant.name}. Trocar pessoa`}
-          >
-            <Avatar name={participant.name} />
-            <span className="truncate">{participant.name}</span>
-            <span className="hidden shrink-0 font-normal text-muted-foreground sm:inline">
-              · casa {index + 1} de {total}
+          <div className="flex min-h-11 min-w-0 items-center gap-2">
+            <ParticipantBadge participant={participant} onSignOut={onSignOut} />
+            <span className="hidden shrink-0 text-sm text-muted-foreground sm:inline">
+              casa {index + 1} de {total}
             </span>
-          </button>
+          </div>
           <div className="flex shrink-0 gap-2">
             <Button variant="outline" size="sm" onClick={onOpenList}>
               <LayoutGrid />

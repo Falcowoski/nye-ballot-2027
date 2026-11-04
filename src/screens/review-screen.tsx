@@ -1,5 +1,6 @@
 import { ArrowDown, ArrowUp, Check } from 'lucide-react'
 
+import { ParticipantBadge } from '@/components/participant-badge'
 import { Button } from '@/components/ui/button'
 import { formatBrl, formatDateTime } from '@/domain/format'
 import { splitPrice } from '@/domain/pricing'
@@ -17,7 +18,7 @@ type Props = {
   onChoose: () => void
   onSubmit: () => void
   onBack: () => void
-  onChangePerson: () => void
+  onSignOut: () => void
   onOpenStanding: (listingId: string) => void
 }
 
@@ -31,7 +32,7 @@ export function ReviewScreen({
   onChoose,
   onSubmit,
   onBack,
-  onChangePerson,
+  onSignOut,
   onOpenStanding,
 }: Props) {
   const { listings, participants, votes } = ballot
@@ -64,7 +65,11 @@ export function ReviewScreen({
         <Button variant="ghost" size="sm" className="-ml-2" onClick={onBack}>
           ‹ {participant ? 'Casas' : 'Voltar'}
         </Button>
-        <span className="text-sm font-semibold">Réveillon 2027 🍻</span>
+        {participant ? (
+          <ParticipantBadge participant={participant} onSignOut={onSignOut} />
+        ) : (
+          <span className="text-sm font-semibold">Réveillon 2027 🍻</span>
+        )}
       </header>
 
       <div className="flex flex-col gap-5 md:grid md:grid-cols-2 md:items-start md:gap-6">
@@ -73,21 +78,9 @@ export function ReviewScreen({
             aria-labelledby="mine-title"
             className="flex flex-col gap-3 rounded-2xl border bg-background p-4 md:sticky md:top-6"
           >
-            <div className="flex items-baseline justify-between gap-2">
-              <h1 id="mine-title" className="text-xl font-bold">
-                Seu top 3
-              </h1>
-              <span className="text-[13px] text-muted-foreground">
-                votando como{' '}
-                <button
-                  type="button"
-                  onClick={onChangePerson}
-                  className="font-semibold text-foreground underline-offset-2 outline-none hover:underline focus-visible:underline"
-                >
-                  {participant.name}
-                </button>
-              </span>
-            </div>
+            <h1 id="mine-title" className="text-xl font-bold">
+              Seu top 3
+            </h1>
 
             <ol className="flex flex-col gap-2">
               {Array.from({ length: slots }, (_, i) => {
