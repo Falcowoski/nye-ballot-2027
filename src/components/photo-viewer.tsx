@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 import { Dialog, DialogClose, DialogDescription, DialogFullscreen, DialogTitle } from '@/components/ui/dialog'
 
-/** Asks the Airbnb image CDN for a bigger rendition; other URLs pass through unchanged. */
+/** Asks Airbnb's image CDN for a bigger rendition; other photos (Booking crops, local files) pass through unchanged. */
 export function largePhoto(src: string) {
   return src.replace(/([?&]im_w=)\d+/, '$11440')
 }

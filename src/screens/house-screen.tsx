@@ -6,8 +6,9 @@ import { PhotoCarousel } from '@/components/photo-carousel'
 import { PriceBlock } from '@/components/price-block'
 import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { formatDecimal, plural } from '@/domain/format'
+import { plural } from '@/domain/format'
 import { NOTE_AUTHOR_NAME, opinionsFor } from '@/domain/opinions'
+import { formatRating, listingSource, VIEW_LISTING_LABEL } from '@/domain/source'
 import { compactPicks, requiredPicks } from '@/domain/standings'
 import type { Ballot, Picks } from '@/domain/types'
 import { cn } from '@/lib/utils'
@@ -44,6 +45,7 @@ export function HouseScreen({
   const suggester = participants.find((p) => p.id === listing.suggestedBy)
   const nameOf = (id: string) => listings.find((l) => l.id === id)?.name ?? ''
   const opinions = opinionsFor(ballot, listing.id)
+  const rating = formatRating(listing)
   const participantName = (id: string) => participants.find((p) => p.id === id)?.name ?? '?'
   const isLast = index === total - 1
   const pickCount = compactPicks(picks).length
@@ -103,20 +105,17 @@ export function HouseScreen({
 
             <PriceBlock totalPrice={listing.totalPrice} participants={participants} />
 
-            {(facts.length > 0 || listing.rating != null) && (
+            {(facts.length > 0 || rating) && (
               <ul className="flex flex-wrap gap-1.5">
                 {facts.map((fact) => (
                   <li key={fact} className="rounded-full border px-2 py-0.5 text-xs">
                     {fact}
                   </li>
                 ))}
-                {listing.rating != null && (
+                {rating && (
                   <li className="flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs">
-                    <Star className="size-3 fill-current" aria-hidden="true" />
-                    {formatDecimal(listing.rating)}
-                    {listing.reviewCount != null && (
-                      <span className="text-muted-foreground">({listing.reviewCount})</span>
-                    )}
+                    {rating.scale === 5 && <Star className="size-3 fill-current" aria-hidden="true" />}
+                    {rating.text}
                   </li>
                 )}
               </ul>
@@ -177,15 +176,15 @@ export function HouseScreen({
               </section>
             )}
 
-            {listing.airbnbUrl && (
+            {listing.url && (
               <a
-                href={listing.airbnbUrl}
+                href={listing.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 rounded-[14px] border p-3.5 outline-none transition-colors hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <span className="flex flex-1 flex-col gap-0.5">
-                  <span className="text-[15px] font-semibold">Ver no Airbnb</span>
+                  <span className="text-[15px] font-semibold">{VIEW_LISTING_LABEL[listingSource(listing.url)]}</span>
                   <span className="text-[13px] text-muted-foreground">
                     Todas as fotos, detalhes e avaliações de outros hóspedes
                   </span>
