@@ -77,7 +77,7 @@ function Viewer({ photos, label, startIndex }: { photos: string[]; label: string
                   loading={Math.abs(i - startIndex) <= 1 ? 'eager' : 'lazy'}
                   referrerPolicy="no-referrer"
                   draggable={false}
-                  className="max-h-full max-w-full select-none object-contain"
+                  className="h-full w-full select-none object-contain"
                 />
               </div>
             ))}
