@@ -2,7 +2,11 @@ import { createClient } from '@supabase/supabase-js'
 
 import type { Ballot } from '@/domain/types'
 
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, {
+// In production the API goes through the site's own domain (see the /sb rewrite in vercel.json),
+// so a visitor whose DNS can't resolve *.supabase.co can still vote.
+const supabaseUrl = import.meta.env.PROD ? `${window.location.origin}/sb` : import.meta.env.VITE_SUPABASE_URL
+
+const supabase = createClient(supabaseUrl, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
 })
 
